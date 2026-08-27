@@ -1,0 +1,24 @@
+body {
+    background: #f7f9fc;
+    color: #1f2937;
+}
+
+.card-receitas {
+    border-color: #b7e4c7;
+    background: linear-gradient(135deg, #fff, #f4fff7);
+}
+
+.card-despesas {
+    border-color: #f5b7bd;
+    background: linear-gradient(135deg, #fff, #fff6f6);
+}
+
+.card-saldo {
+    border-color: #b8d4ff;
+    background: linear-gradient(135deg, #fff, #f5f9ff);
+}
+
+.linha-vazia td {
+    height: 120px;
+    vertical-align: middle;
+}

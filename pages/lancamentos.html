@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle Financeiro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand fs-6 fw-bold" href="../index.html"><span class="d-inline-flex align-items-center justify-content-center 
+             bg-success rounded text-white me-1"style="width: 25px; height: 25px"><i class="bi bi-currency-dollar"></i>
+            </span>Controle Financeiro</a>
+        <!-- Botão hamburger -->
+        <button
+          class="navbar-toggler border-2"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <!--Opções Menu-->
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto fs-6 fw-bold">
+            <li class="nav-item">
+              <a class="nav-link" href="../index.html"><i class="bi bi-house-door-fill me-1"></i>Início</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="lancamentos.html"><i class="bi bi-list-ul me-1"></i>Lançamentos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="categorias.html"><i class="bi bi-tags me-1"></i>Categorias</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="contas.html"><i class="bi bi-wallet2 me-1"></i>Contas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="relatorio.html"><i class="bi-bar-chart-line me-1"></i>Relatório</a>
+            </li>            
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+     <main class="container py-4">
+        <div class="container mt-3 flex-grow-1">
+            <div class="row">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <div class="d-flex col-auto align-items-center me-5">
+                            <i class="bi bi-list-ul me-1 fs-2 me-1"></i>
+                            <h2 class="fw-bold mb-0">Lançamentos</h2>     
+                        </div>  
+                        <p class="text-secondary mb-0">Cadastre, pesquise, edite ou exclua movimentações.</p>            
+                    </div>                
+                    <div>
+                        <button class="btn btn-success" id="btnNovoLancamento"><i class="bi bi-plus"></i>Novo Lançamento</button>
+                    </div>
+                </div>                
+            </div>
+        </div>
+
+        <section class="card mb-4">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-lg-3">
+                        <label class="form-label">Pesquisar</label>
+                        <input id="filtroBusca" class="form-control" placeholder="Descrição ou observação">
+                    </div>
+                    <div class="col-md-3 col-lg-2">
+                        <label class="form-label">Tipo</label>
+                        <select id="filtroTipo" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="receita">Receitas</option>
+                            <option value="despesa">Despesas</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 col-lg-2">
+                        <label class="form-label">Categoria</label>
+                        <select id="filtroCategoria" class="form-select"></select>
+                    </div>
+                    <div class="col-md-3 col-lg-2">
+                        <label class="form-label">Conta</label>
+                        <select id="filtroConta" class="form-select"></select>
+                    </div>
+                    <div class="col-md-3 col-lg-2">
+                        <label class="form-label">Mês</label>
+                        <input id="filtroMes" type="month" class="form-control">
+                    </div>
+                    <div class="col-lg-1 d-flex align-items-end">
+                        <button id="btnLimparFiltros" class="btn btn-outline-secondary w-100" title="Limpar filtros">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Descrição</th>
+                                <th>Categoria</th>
+                                <th>Conta</th>
+                                <th>Tipo</th>
+                                <th class="text-end">Valor</th>
+                                <th class="text-end">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaLancamentos"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="/js/app.js"></script>
+</body>
+</html>
