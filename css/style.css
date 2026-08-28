@@ -22,3 +22,20 @@ body {
     height: 120px;
     vertical-align: middle;
 }
+
+.badge-receita {
+    width: 72px;
+    display: inline-block;
+    text-align: center;
+    color: #146c43;
+    background: #d1e7dd;
+}
+
+.badge-despesa {
+    width: 72px;
+    display: inline-block;
+    text-align: center;
+    color: #b02a37;
+    background: #f8d7da;
+}
+

@@ -355,6 +355,9 @@ if (formDashboardLancamento) {
                 .toLocaleDateString("pt-BR")
             const classeValor = lancamento.tipo === "receita" ? "text-success" : "text-danger"
             const sinal = lancamento.tipo === "receita" ? "+" : "-"
+            const badgeTipo = lancamento.tipo === "receita" 
+                ? `<span class="badge bg-success-subtle text-success fw-normal rounded-2 d-inline-flex align-items-center justify-content-center" style="width: 65px; height: 27px;">Receita</span>`
+                : `<span class="badge bg-danger-subtle text-danger fw-normal rounded-2 d-inline-flex align-items-center justify-content-center" style="width: 65px; height: 27px;">Despesa</span>`
 
             tabela.innerHTML += `
                 <tr>
@@ -362,7 +365,7 @@ if (formDashboardLancamento) {
                     <td>${lancamento.descricao}</td>
                     <td>${categoria ? categoria.nome : "Sem categoria"}</td>
                     <td>${conta ? conta.nome : "Sem conta"}</td>
-                    <td>${lancamento.tipo}</td>
+                    <td>${badgeTipo}</td>
                     <td class="text-end fw-bold ${classeValor}">${sinal} R$ ${lancamento.valor.toLocaleString("pt-BR", {minimumFractionDigits: 2})}</td>
                     <td class="text-end">
                         <button class="btn btn-sm btn-outline-primary" data-edit-index="${lancamento.id}"><i class="bi bi-pencil"></i></button>
