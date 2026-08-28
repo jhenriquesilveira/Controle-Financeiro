@@ -75,7 +75,7 @@
                     <div class="col-md-3 col-lg-2">
                         <label class="form-label">Tipo</label>
                         <select id="filtroTipo" class="form-select">
-                            <option value="">Todos</option>
+                            <option value="Todos">Todos</option>
                             <option value="receita">Receitas</option>
                             <option value="despesa">Despesas</option>
                         </select>
@@ -89,12 +89,13 @@
                         <select id="filtroConta" class="form-select"></select>
                     </div>
                     <div class="col-md-3 col-lg-2">
-                        <label class="form-label">Mês</label>
-                        <input id="filtroMes" type="month" class="form-control">
+                        <label class="form-label">Mês/Ano</label>
+                        <input type="text" id="filtroMes" class="form-control" placeholder="MM/AAAA" maxlength="7" inputmode="numeric" autocomplete="off">
+                        <!--<input id="filtroMes" type="month" class="form-control">-->
                     </div>
                     <div class="col-lg-1 d-flex align-items-end">
                         <button id="btnLimparFiltros" class="btn btn-outline-secondary w-100" title="Limpar filtros">
-                            <i class="bi bi-x-lg"></i>
+                            <i class="bi bi-arrow-counterclockwise"></i>
                         </button>
                     </div>
                 </div>
@@ -120,9 +121,64 @@
                     </table>
                 </div>
             </div>
-        </section>
-        
+        </section>        
      </main>
+
+     <div class="modal fade" id="modalLancamento" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <form id="formLancamento">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLancamentoTitulo">Novo lançamento</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="id">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label">Descrição</label>
+                                <input id="descricao" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Valor (R$)</label>
+                                <input id="valor" type="number" min="0.01" step="0.01" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Tipo</label>
+                                <select id="tipo" class="form-select" required>
+                                    <option value="">Selecione</option>
+                                    <option value="receita">Receita</option>
+                                    <option value="despesa">Despesa</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Categoria</label>
+                                <select id="categoria" class="form-select" required></select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Conta</label>
+                                <select id="conta" class="form-select" required></select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Data</label>
+                                <input id="data" type="date" class="form-control" required>                                
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label">Observação</label>
+                                <input id="observacao" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-lg me-1"></i> Salvar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="/js/app.js"></script>

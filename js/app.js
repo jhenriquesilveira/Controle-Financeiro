@@ -3,6 +3,34 @@ import { Conta } from "./conta.js"
 import { Categoria } from "./categoria.js"
 import { Lancamento } from "./lancamento.js"
 
+function carregarContas(idElemento) {
+
+    const contas = Storage.recuperar("contas")
+    const selectConta = document.getElementById(idElemento)
+    selectConta.innerHTML = `<option value="">Selecione</option>`
+
+    contas.forEach(conta => {
+        selectConta.innerHTML += `<option value="${conta.id}">${conta.nome}</option>`
+    })
+}  
+
+function carregarCategoriasPorTipo(idTipo, idCategoria) {
+
+    const tipo = document.getElementById(idTipo).value
+    const categorias = Storage.recuperar("categorias")
+    const selectCategoria = document.getElementById(idCategoria)
+    selectCategoria.innerHTML = `<option value="">Selecione</option>`
+
+    const categoriasFiltradas = tipo !== "Todos"
+        ? categorias.filter(categoria => categoria.tipo === tipo)
+        : categorias
+
+    categoriasFiltradas.forEach(categoria => {
+        selectCategoria.innerHTML += `<option value="${categoria.id}">${categoria.nome}</option>`
+    })
+}
+
+
 //TELA CONTAS
 const btnNovaConta = document.getElementById("btnNovaConta")
 if (btnNovaConta) {
@@ -240,41 +268,18 @@ if (btnNovaCategoria) {
 
 //TELA PRINCIPAL
 const formDashboardLancamento = document.getElementById("formDashboardLancamento")
-if (formDashboardLancamento) {    
-    function carregarCategoriasPorTipo() {
-
-        const tipo = document.getElementById("dashTipo").value
-        const categorias = Storage.recuperar("categorias")
-        const selectCategoria = document.getElementById("dashCategoria")
-        selectCategoria.innerHTML = `<option value="">Selecione</option>`
-
-        categorias
-            .filter(categoria => categoria.tipo === tipo)
-            .forEach(categoria => {
-                selectCategoria.innerHTML += `<option value="${categoria.id}">${categoria.nome}</option>`
-            })
-    }
+if (formDashboardLancamento) { 
+    
+    carregarCategoriasPorTipo("dashTipo", "dashCategoria")    
 
     document.getElementById("dashTipo").addEventListener("change", () => {        
-        carregarCategoriasPorTipo()
+        carregarCategoriasPorTipo("dashTipo", "dashCategoria")
     })
-
-    function carregarContas() {
-
-        const contas = Storage.recuperar("contas")
-        const selectConta = document.getElementById("dashConta")
-        selectConta.innerHTML = `<option value="">Selecione</option>`
-
-        contas.forEach(conta => {
-            selectConta.innerHTML += `<option value="${conta.id}">${conta.nome}</option>`
-        })
-    }
-
-    
 
     formDashboardLancamento.addEventListener("submit", (event) => {
         event.preventDefault()
 
+        const id = Number(document.getElementById("lancamentoId").value)
         const data = document.getElementById("dashData").value
         const descricao = document.getElementById("dashDescricao").value
         const valor = Number(document.getElementById("dashValor").value)
@@ -282,7 +287,11 @@ if (formDashboardLancamento) {
         const categoriaId = Number(document.getElementById("dashCategoria").value)
         const contaId = Number(document.getElementById("dashConta").value)
         
-        Lancamento.salvarLancamento(descricao, valor, tipo, data, categoriaId, contaId)
+        if (id) {
+            Lancamento.atualizarLancamento(id, descricao, valor, tipo, data, categoriaId, contaId)
+        }else{
+            Lancamento.salvarLancamento(descricao, valor, tipo, data, categoriaId, contaId)
+        }
         formDashboardLancamento.reset()
         document.getElementById("dashData").valueAsDate = new Date()
         carregarUltimosLancamentos()
@@ -362,6 +371,7 @@ if (formDashboardLancamento) {
                 </tr> `            
         })
         carregarTotaisMes()
+        configurarEventosIndex()
     }
 
     document.getElementById("formDashboardmes").addEventListener("change", () => {
@@ -386,7 +396,7 @@ if (formDashboardLancamento) {
         bEditar.forEach(botao =>{
             botao.addEventListener("click", () => {
                 const id = Number(botao.dataset.editIndex)            
-                editarEvento(id)            
+                editarLancamento(id)            
             })
         })
 
@@ -403,23 +413,101 @@ if (formDashboardLancamento) {
         })
     }
 
-    function editarConta(id){
-        const conta = Conta.buscar(id)
-        if (!conta){return}
+    function editarLancamento(id) {
 
-        document.getElementById("contaId").value = conta.id
-        document.getElementById("contaNome").value = conta.nome
-        document.getElementById("contaTipo").value = conta.tipo
-        document.getElementById("contaSaldoInicial").value = conta.saldoInicial  
-        const modalElemento = document.getElementById("modalCadastrarConta")
-        const modal = new bootstrap.Modal(modalElemento)
-        modal.show()  
+        const lancamento = Lancamento.buscar(id)
+        if (!lancamento) {return}
+        document.getElementById("lancamentoId").value = lancamento.id
+        document.getElementById("dashDescricao").value = lancamento.descricao
+        document.getElementById("dashValor").value = lancamento.valor
+        document.getElementById("dashTipo").value = lancamento.tipo
+        document.getElementById("dashData").value = lancamento.data
+
+        carregarCategoriasPorTipo("dashTipo", "dashCategoria")
+
+        document.getElementById("dashCategoria").value = lancamento.categoriaId
+        document.getElementById("dashConta").value = lancamento.contaId
     }
 
     carregarMeses()
-    carregarContas()
+    carregarContas("dashConta")
     carregarUltimosLancamentos()    
     configurarEventosIndex()
 }
 
+//TELA LANÇAMENTOS
+const modalLancamento = document.getElementById("modalLancamento")
+if (modalLancamento) {   
 
+    //carrega os dados na tela lançamentos
+    carregarCategoriasPorTipo("filtroTipo", "filtroCategoria")
+    document.getElementById("filtroTipo").addEventListener("change", () => {        
+        carregarCategoriasPorTipo("filtroTipo", "filtroCategoria")
+    })
+    carregarContas("filtroConta")
+
+    //Carrega os dados no modal
+    document.getElementById("btnNovoLancamento").addEventListener("click", () => {
+        document.getElementById("formLancamento").reset()   
+        document.getElementById("data").valueAsDate = new Date()    
+        carregarContas("conta")
+        carregarCategoriasPorTipo("tipo", "categoria")    
+        document.getElementById("tipo").addEventListener("change", () => {        
+            carregarCategoriasPorTipo("tipo", "categoria")
+        })
+        const modal = new bootstrap.Modal(
+            document.getElementById("modalLancamento")
+        )
+        modal.show()
+    })
+
+    document.getElementById("formLancamento").addEventListener("submit", (event) => {            
+        event.preventDefault()
+        const id = Number(document.getElementById("id").value)
+        const descricao = document.getElementById("descricao").value
+        const valor = Number(document.getElementById("valor").value)
+        const tipo = document.getElementById("tipo").value
+        const data = document.getElementById("data").value
+        const categoriaId = Number(document.getElementById("categoria").value)
+        const contaId = Number(document.getElementById("conta").value)
+
+        if (id) {
+            Lancamento.atualizarLancamento(id, descricao, valor, tipo, data, categoriaId, contaId)
+        }else{
+            Lancamento.salvarLancamento(descricao, valor, tipo, data, categoriaId, contaId)
+        }
+        event.target.reset()           
+        document.getElementById("dashData").valueAsDate = new Date()  
+        const modal = bootstrap.Modal.getInstance(document.getElementById("modalLancamento"))
+        modal.hide()
+    })
+
+    document.getElementById("filtroMes").addEventListener("input", (event) => {
+
+        let valor = event.target.value.replace(/\D/g, "")
+        // Limita a 6 números
+        valor = valor.substring(0, 6)
+        // Valida o mês
+        if (valor.length >= 2) {
+            let mes = Number(valor.substring(0, 2))
+            if (mes < 1 || mes > 12) {
+                valor = valor.substring(0, 1)
+            }
+        }
+        // Adiciona a barra automaticamente
+        if (valor.length > 2) {
+            valor = valor.substring(0, 2) + "/" + valor.substring(2)
+        }
+        event.target.value = valor
+    })
+
+    document.getElementById("btnLimparFiltros").addEventListener("click", () =>{
+        document.getElementById("filtroBusca").value = ""
+        document.getElementById("filtroTipo").value = "Todos"
+        document.getElementById("filtroCategoria").value = ""
+        document.getElementById("filtroConta").value = ""
+        document.getElementById("filtroMes").value = ""
+    })
+
+
+}
