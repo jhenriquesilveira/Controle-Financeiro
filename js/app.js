@@ -30,6 +30,11 @@ function carregarCategoriasPorTipo(idTipo, idCategoria) {
     })
 }
 
+    function formatarData(data) {
+        const [ano, mes, dia] = data.split("-")
+        return `${dia}/${mes}/${ano}`
+    }
+
 
 //TELA CONTAS
 const btnNovaConta = document.getElementById("btnNovaConta")
@@ -454,14 +459,16 @@ if (modalLancamento) {
         document.getElementById("formLancamento").reset()   
         document.getElementById("data").valueAsDate = new Date()    
         carregarContas("conta")
-        carregarCategoriasPorTipo("tipo", "categoria")    
-        document.getElementById("tipo").addEventListener("change", () => {        
-            carregarCategoriasPorTipo("tipo", "categoria")
-        })
+        carregarCategoriasPorTipo("tipo", "categoria")            
         const modal = new bootstrap.Modal(
             document.getElementById("modalLancamento")
         )
         modal.show()
+    })
+
+    //Altera as categorias sempre que eu mudar o tipo (Receita/Despesa)
+    document.getElementById("tipo").addEventListener("change", () => {
+        carregarCategoriasPorTipo("tipo", "categoria")
     })
 
     document.getElementById("formLancamento").addEventListener("submit", (event) => {            
@@ -479,8 +486,9 @@ if (modalLancamento) {
         }else{
             Lancamento.salvarLancamento(descricao, valor, tipo, data, categoriaId, contaId)
         }
-        event.target.reset()           
-        document.getElementById("dashData").valueAsDate = new Date()  
+        
+        filtrarLancamentos()   
+        event.target.reset()          
         const modal = bootstrap.Modal.getInstance(document.getElementById("modalLancamento"))
         modal.hide()
     })
@@ -510,7 +518,141 @@ if (modalLancamento) {
         document.getElementById("filtroCategoria").value = ""
         document.getElementById("filtroConta").value = ""
         document.getElementById("filtroMes").value = ""
+
+        filtrarLancamentos()
     })
+
+    function filtrarLancamentos() { //monta os filtros
+
+        const busca = document.getElementById("filtroBusca").value.trim().toLowerCase()
+        const tipo = document.getElementById("filtroTipo").value
+        const categoriaId = document.getElementById("filtroCategoria").value
+        const contaId = document.getElementById("filtroConta").value
+        const mesAno = document.getElementById("filtroMes").value
+
+        const lancamentos = Storage.recuperar("lancamentos")
+
+        const lancamentosFiltrados = lancamentos.filter(lancamento => {
+
+            // Filtro por descrição
+            const correspondeBusca = String(lancamento.descricao ?? "").toLowerCase().includes(busca) ||
+            String(lancamento.observacao ?? "").toLowerCase().includes(busca)
+
+            // Filtro por tipo
+            const correspondeTipo = tipo === "Todos" || lancamento.tipo === tipo
+
+            // Filtro por categoria
+            const correspondeCategoria = categoriaId === "" || lancamento.categoriaId === Number(categoriaId)
+
+            // Filtro por conta
+            const correspondeConta = contaId === "" || lancamento.contaId === Number(contaId)
+
+            // Filtro por mês/ano
+            let correspondeMes = true
+            if (mesAno !== "") {
+                const [mes, ano] = mesAno.split("/")
+                const dataLancamento = new Date(lancamento.data + "T00:00:00")
+
+                correspondeMes = dataLancamento.getMonth() + 1 === Number(mes) && dataLancamento.getFullYear() === Number(ano)
+            }
+
+            return (correspondeBusca && correspondeTipo && correspondeCategoria && correspondeConta && correspondeMes)
+        })
+
+        carregarTabelaLancamentos(lancamentosFiltrados)
+    }
+
+    function carregarTabelaLancamentos(lancamentos) {
+
+        const tbody = document.getElementById("tabelaLancamentos")
+        const categorias = Storage.recuperar("categorias")
+        const contas = Storage.recuperar("contas")
+
+        tbody.innerHTML = ""
+
+        lancamentos.sort((a, b) => new Date(b.data) - new Date(a.data)).forEach(lancamento => {
+
+            const categoria = categorias.find(categoria => categoria.id === lancamento.categoriaId)
+
+            const conta = contas.find(conta => conta.id === lancamento.contaId)
+
+            const badgeTipo = lancamento.tipo === "receita"
+                ? `<span class="badge badge-tipo bg-success-subtle text-success-emphasis rounded-3 py-2 fw-normal">
+                    Receita</span>`
+                : `<span class="badge badge-tipo bg-danger-subtle text-danger-emphasis rounded-3 py-2 fw-normal">
+                    Despesa</span>`
+
+            const valor = lancamento.valor.toLocaleString("pt-BR", {style: "currency", currency: "BRL"})
+
+            tbody.innerHTML += `
+                <tr>
+                    <td>${formatarData(lancamento.data)}</td>
+                    <td class="fw-semibold">${lancamento.descricao}</td>
+                    <td>
+                        <span class="badge bg-light text-dark fw-normal">
+                            ${categoria ? categoria.nome : ""}
+                        </span>
+                    </td>
+                    <td>${conta ? conta.nome : ""}</td>
+                    <td>${badgeTipo}</td>
+                    <td class="text-end ${lancamento.tipo === "receita" ? "text-success" : "text-danger"}">
+                        ${lancamento.tipo === "receita" ? "+" : "-"} ${valor}
+                    </td>
+                    <td class="text-end">
+                        <button class="btn btn-outline-primary btn-sm btn-editar-lancamento" data-id="${lancamento.id}">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+
+                        <button class="btn btn-outline-danger btn-sm btn-excluir-lancamento" data-id="${lancamento.id}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `
+        })
+        configurarBotoesLancamento()
+    }
+
+    //captura alterações nos filtros disponíveis
+    document.getElementById("filtroBusca").addEventListener("input", filtrarLancamentos)
+    document.getElementById("filtroTipo").addEventListener("change", filtrarLancamentos)
+    document.getElementById("filtroCategoria").addEventListener("change", filtrarLancamentos)
+    document.getElementById("filtroConta").addEventListener("change", filtrarLancamentos)
+    document.getElementById("filtroMes").addEventListener("input", filtrarLancamentos)
+
+    function configurarBotoesLancamento() {
+        const botoesExcluir = document.querySelectorAll(".btn-excluir-lancamento")
+        botoesExcluir.forEach(botao => {
+            botao.addEventListener("click", () => {
+                const id = Number(botao.dataset.id)
+                if (confirm("Tem certeza que deseja excluir este lançamento?")) {
+                    Lancamento.excluirLancamento(id)
+                    filtrarLancamentos()
+                }
+            })
+        })
+
+        document.querySelectorAll(".btn-editar-lancamento").forEach(botao => {
+            botao.addEventListener("click", () => {
+                const id = Number(botao.dataset.id)
+                const lancamento = Lancamento.buscar(id)
+                document.getElementById("id").value = lancamento.id
+                document.getElementById("descricao").value = lancamento.descricao
+                document.getElementById("valor").value = lancamento.valor
+                document.getElementById("tipo").value = lancamento.tipo
+                document.getElementById("data").value = lancamento.data
+
+                carregarCategoriasPorTipo("tipo", "categoria")
+                carregarContas("conta")
+
+                document.getElementById("categoria").value = lancamento.categoriaId
+                document.getElementById("conta").value = lancamento.contaId
+
+                const modal = new bootstrap.Modal(document.getElementById("modalLancamento"))
+                modal.show()
+            })            
+        })
+    }
 
 
 }
