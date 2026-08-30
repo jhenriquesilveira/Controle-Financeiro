@@ -1,4 +1,5 @@
 import { Storage } from "./storage.js"
+import { Conta } from "./conta.js"
 
 export class Lancamento{
     constructor(id, descricao, valor, tipo, data, categoriaId, contaId) {
@@ -30,7 +31,8 @@ export class Lancamento{
         }
         lancamentos.push(lancamento)
         Storage.salvar("lancamentos", lancamentos)
-        alert("Lançamento salvo com sucesso!")
+        Conta.atualizarSaldo(contaId)
+        alert("Lançamento salvo com sucesso!")        
     }
 
     static atualizarLancamento(id, descricao, valor, tipo, data, categoriaId, contaId) {
@@ -39,6 +41,8 @@ export class Lancamento{
         const lancamento = lancamentos.find(lancamento => lancamento.id === id)
 
         if (!lancamento) {return}
+        //Se o usuário trocar a conta na atualização, a conta antiga e a nova serão atualizadas
+        const contaAnteriorId = lancamento.contaId 
 
         lancamento.descricao = descricao
         lancamento.valor = valor
@@ -48,12 +52,21 @@ export class Lancamento{
         lancamento.contaId = contaId
 
         Storage.salvar("lancamentos", lancamentos)
+        Conta.atualizarSaldo(contaAnteriorId)
+        if (contaAnteriorId !== contaId) {
+            Conta.atualizarSaldo(contaId)
+        }
     }
 
     static excluirLancamento(id) {
         const lancamentos = Storage.recuperar("lancamentos")
+        
+        // Armazena id da conta antes de excluir
+        const contaId = lancamentos.find(lancamento => lancamento.id === id).contaId
+
         const lancamentos_atualizados = lancamentos.filter(lancamento => lancamento.id !== id)
         Storage.salvar("lancamentos", lancamentos_atualizados)
+        Conta.atualizarSaldo(contaId)
     }
 
     static buscarLancamentosPorMes(mes, ano) {
@@ -86,5 +99,5 @@ export class Lancamento{
         const receitas = this.totalReceitas(mes, ano)
         const despesas = this.totalDespesas(mes, ano)
         return receitas - despesas
-    }
+    }    
 }

@@ -30,18 +30,35 @@ function carregarCategoriasPorTipo(idTipo, idCategoria) {
     })
 }
 
-    function formatarData(data) {
-        const [ano, mes, dia] = data.split("-")
-        return `${dia}/${mes}/${ano}`
+function formatarData(data) {
+    const [ano, mes, dia] = data.split("-")
+    return `${dia}/${mes}/${ano}`
+}
+
+function carregarTotaisMes(compMes, receita, despesa, total) {
+
+    const selectMes = document.getElementById(compMes)
+    let valorMes = selectMes.value
+    
+    // Converte para xxxx-xx se vier da tela de relatórios
+    if (valorMes.includes("/")) {
+        const [mes, ano] = valorMes.split("/")
+        valorMes = `${ano}-${mes}`        
     }
+    
+    const [ano, mes] = valorMes.split("-")
+        
+    document.getElementById(receita).textContent = Lancamento.totalReceitas(Number(mes), Number(ano)).toFixed(2)
+    document.getElementById(despesa).textContent = Lancamento.totalDespesas(Number(mes), Number(ano)).toFixed(2)
+    document.getElementById(total).textContent = Lancamento.saldo(Number(mes), Number(ano)).toFixed(2)
+}
 
 
 //TELA CONTAS
 const btnNovaConta = document.getElementById("btnNovaConta")
 if (btnNovaConta) {
     document.getElementById("btnNovaConta").addEventListener("click", () => {
-            document.getElementById("contaId").value = "";
-            document.getElementById("contaSaldoInicial").value = "0";
+            document.getElementById("contaId").value = "";            
             document.getElementById("formConta").reset()
             //código para abrir o modal via programação
             const modalElemento = document.getElementById("modalCadastrarConta")
@@ -54,7 +71,7 @@ if (btnNovaConta) {
         const id = Number(document.getElementById("contaId").value)
         const nome= document.getElementById("contaNome").value
         const tipo= document.getElementById("contaTipo").value
-        const saldoInicial= Number(document.getElementById("contaSaldoInicial").value)
+        const saldoInicial= 0
 
         if (id){
             Conta.atualizarConta(id, nome, tipo, saldoInicial)
@@ -106,7 +123,7 @@ if (btnNovaConta) {
                                     </p>                                
                                     <p class="text-secondary mb-1">Saldo atual:</p>
                                     <h4 class="fw-bold text-success mb-0">
-                                        R$ ${conta.saldoInicial.toLocaleString("pt-BR", {
+                                        R$ ${conta.saldo.toLocaleString("pt-BR", {
                                             minimumFractionDigits: 2
                                         })}
                                     </h4>
@@ -163,7 +180,7 @@ if (btnNovaConta) {
         document.getElementById("contaId").value = conta.id
         document.getElementById("contaNome").value = conta.nome
         document.getElementById("contaTipo").value = conta.tipo
-        document.getElementById("contaSaldoInicial").value = conta.saldoInicial  
+        //document.getElementById("contaSaldoInicial").value = conta.saldo  (REMOVIDO)
         const modalElemento = document.getElementById("modalCadastrarConta")
         const modal = new bootstrap.Modal(modalElemento)
         modal.show()  
@@ -300,7 +317,7 @@ if (formDashboardLancamento) {
         formDashboardLancamento.reset()
         document.getElementById("dashData").valueAsDate = new Date()
         carregarUltimosLancamentos()
-        carregarTotaisMes()
+        carregarTotaisMes("formDashboardmes", "Receita_total", "Despesa_total", "Saldo_total")
     })
 
     function carregarMeses(){
@@ -378,24 +395,14 @@ if (formDashboardLancamento) {
                     </td>
                 </tr> `            
         })
-        carregarTotaisMes()
+        carregarTotaisMes("formDashboardmes", "Receita_total", "Despesa_total", "Saldo_total")
         configurarEventosIndex()
     }
 
     document.getElementById("formDashboardmes").addEventListener("change", () => {
         carregarUltimosLancamentos()
-        carregarTotaisMes()
-    })
-
-    function carregarTotaisMes() {
-
-        const selectMes = document.getElementById("formDashboardmes")
-        const [ano, mes] = selectMes.value.split("-")
-         
-        document.getElementById("Receita_total").textContent = Lancamento.totalReceitas(Number(mes), Number(ano)).toFixed(2)
-        document.getElementById("Despesa_total").textContent = Lancamento.totalDespesas(Number(mes), Number(ano)).toFixed(2)
-        document.getElementById("Saldo_total").textContent = Lancamento.saldo(Number(mes), Number(ano)).toFixed(2)
-    }
+        carregarTotaisMes("formDashboardmes", "Receita_total", "Despesa_total", "Saldo_total")
+    })    
 
     function configurarEventosIndex(){
         const bEditar = document.querySelectorAll("[data-edit-index]")
@@ -441,6 +448,7 @@ if (formDashboardLancamento) {
     carregarContas("dashConta")
     carregarUltimosLancamentos()    
     configurarEventosIndex()
+    carregarTotaisMes("formDashboardmes", "Receita_total", "Despesa_total", "Saldo_total")
 }
 
 //TELA LANÇAMENTOS
@@ -452,7 +460,9 @@ if (modalLancamento) {
     document.getElementById("filtroTipo").addEventListener("change", () => {        
         carregarCategoriasPorTipo("filtroTipo", "filtroCategoria")
     })
+    
     carregarContas("filtroConta")
+    filtrarLancamentos()
 
     //Carrega os dados no modal
     document.getElementById("btnNovoLancamento").addEventListener("click", () => {
@@ -653,6 +663,164 @@ if (modalLancamento) {
             })            
         })
     }
+}
 
+//TELA RELATÓRIOS
+const relMes = document.getElementById("RelatorioFiltroMes")
+ 
+if (relMes) {
 
+        const hoje = new Date()
+        const anoAtual = hoje.getFullYear()
+        const mesAtual = String(hoje.getMonth() + 1).padStart(2,"0")
+        relMes.value = mesAtual + "/" + anoAtual
+
+     relMes.addEventListener("input", (event) => {
+        let valor = event.target.value.replace(/\D/g, "")
+        // Limita a 6 números
+        valor = valor.substring(0, 6)
+        // Valida o mês
+        if (valor.length >= 2) {
+            let mes = Number(valor.substring(0, 2))
+            if (mes < 1 || mes > 12) {
+                valor = valor.substring(0, 1)
+            }
+        }
+        // Adiciona a barra automaticamente
+        if (valor.length > 2) {
+            valor = valor.substring(0, 2) + "/" + valor.substring(2)
+        }
+        event.target.value = valor
+
+        if (valor.length === 7) {
+            carregarTotaisMes("RelatorioFiltroMes", "Receita_total_rel", "Despesa_total_rel", "Saldo_total_rel")
+            carregarReceitasPorCategoria("RelatorioFiltroMes")
+            carregarDespesasPorCategoria("RelatorioFiltroMes")
+        }
+    })
+
+    
+    function carregarDespesasPorCategoria() {
+
+        let valorMes = relMes.value        
+        const [mes, ano] = valorMes.split("/")               
+
+        // Busca lançamentos do mês
+        const lancamentos = Lancamento.buscarLancamentosPorMes(Number(mes), Number(ano))
+
+        // carrega categorias
+        const categorias = Storage.recuperar("categorias")
+
+        // filtra somente as despesas
+        const despesas = lancamentos.filter(lancamento => lancamento.tipo === "despesa")
+
+        // Total geral das despesas
+        const totalDespesas = despesas.reduce((total, lancamento) => total + Number(lancamento.valor), 0)
+
+        // Cria uma lista com o total de cada categoria
+        const despesasPorCategoria = categorias.map(categoria => {
+            const despesasCategoria = despesas.filter(lancamento => lancamento.categoriaId === categoria.id)
+            const totalCategoria = despesasCategoria.reduce((total, lancamento) => total + Number(lancamento.valor),0)
+            return {categoria: categoria, total: totalCategoria}
+        }).filter(item => item.total > 0)
+
+        // Ordena as despesas da maior para menor
+        despesasPorCategoria.sort((a, b) => b.total - a.total)
+
+        const container = document.getElementById("relCategorias")
+
+        container.innerHTML = ""
+
+        // Se não houver despesas
+        if (despesasPorCategoria.length === 0) {
+            container.innerHTML = `<p class="text-muted mb-0">Nenhuma despesa neste período.</p>`
+            return
+        }
+
+        // Percorre as categorias
+        despesasPorCategoria.forEach(item => {
+            // Calcula o percentual por categoria
+            const percentual = totalDespesas > 0
+                ? (item.total / totalDespesas) * 100
+                : 0
+
+            const percentualAjustado = percentual.toFixed(2)
+
+            container.innerHTML += `
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="fw-medium">${item.categoria.nome} ( ${percentualAjustado}% )</span>
+                        <span class="fw-bold">R$ ${item.total.toFixed(2).replace(".", ",")}</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: ${percentual}%" aria-valuenow="${percentual}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            `
+        })
+    }
+
+    function carregarReceitasPorCategoria() {
+
+        let valorMes = relMes.value        
+        const [mes, ano] = valorMes.split("/")               
+
+        // Busca lançamentos do mês
+        const lancamentos = Lancamento.buscarLancamentosPorMes(Number(mes), Number(ano))
+
+        // carrega categorias
+        const categorias = Storage.recuperar("categorias")
+
+        // filtra somente as despesas
+        const receitas = lancamentos.filter(lancamento => lancamento.tipo === "receita")
+
+        // Total geral das despesas
+        const totalReceitas = receitas.reduce((total, lancamento) => total + Number(lancamento.valor), 0)
+
+        // Cria uma lista com o total de cada categoria
+        const receitasPorCategoria = categorias.map(categoria => {
+            const receitasCategoria = receitas.filter(lancamento => lancamento.categoriaId === categoria.id)
+            const totalCategoria = receitasCategoria.reduce((total, lancamento) => total + Number(lancamento.valor),0)
+            return {categoria: categoria, total: totalCategoria}
+        }).filter(item => item.total > 0)
+
+        // Ordena as despesas da maior para menor
+        receitasPorCategoria.sort((a, b) => b.total - a.total)
+
+        const container = document.getElementById("relContas")
+
+        container.innerHTML = ""
+
+        // Se não houver despesas
+        if (receitasPorCategoria.length === 0) {
+            container.innerHTML = `<p class="text-muted mb-0">Nenhuma receita neste período.</p>`
+            return
+        }
+
+        // Percorre as categorias
+        receitasPorCategoria.forEach(item => {
+            // Calcula o percentual por categoria
+            const percentual = totalReceitas > 0
+                ? (item.total / totalReceitas) * 100
+                : 0
+
+            const percentualAjustado = percentual.toFixed(2)
+
+            container.innerHTML += `
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="fw-medium">${item.categoria.nome} ( ${percentualAjustado}% )</span>
+                        <span class="fw-bold">R$ ${item.total.toFixed(2).replace(".", ",")}</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: ${percentual}%" aria-valuenow="${percentual}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            `
+        })
+    }
+
+    carregarTotaisMes("RelatorioFiltroMes", "Receita_total_rel", "Despesa_total_rel", "Saldo_total_rel")
+    carregarDespesasPorCategoria()
+    carregarReceitasPorCategoria()
 }

@@ -3,6 +3,10 @@ body {
     color: #1f2937;
 }
 
+.footer-text {
+    color: rgba(255, 255, 255, 0.55);
+}
+
 .card-receitas {
     border-color: #b7e4c7;
     background: linear-gradient(135deg, #fff, #f4fff7);
