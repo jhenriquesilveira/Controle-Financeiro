@@ -1,3 +1,4 @@
+import "./seed.js"
 import { Storage } from "./storage.js"
 import { Conta } from "./conta.js"
 import { Categoria } from "./categoria.js"

@@ -1,0 +1,16 @@
+# Análise interna — não versionar
+ANALISE.md
+
+# Sistema operacional
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editores / IDEs
+.vscode/
+.idea/
+*.swp
+
+# Dependências / logs
+node_modules/
+*.log
