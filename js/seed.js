@@ -104,7 +104,8 @@ const LANCAMENTOS = [
     lancamento("Combustível", 265.00, "despesa", doisMesesAtras, 12, 203, 1),
     lancamento("Academia", 120.00, "despesa", doisMesesAtras, 15, 205, 1),
     lancamento("Livros", 143.60, "despesa", doisMesesAtras, 21, 206, 1),
-    lancamento("Lanchonete", 74.30, "despesa", doisMesesAtras, 23, 204, 3),
+    lancamento("Projeto freelance - CRUD", 74.30, "despesa", doisMesesAtras, 23, 204, 3),
+    lancamento("Lanchonete", 550.00, "receita", doisMesesAtras, 1, 102, 3),
 ]
 
 function popularDadosExemplo() {

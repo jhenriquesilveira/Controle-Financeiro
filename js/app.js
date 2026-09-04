@@ -123,7 +123,7 @@ if (btnNovaConta) {
                                         ${conta.tipo}
                                     </p>                                
                                     <p class="text-secondary mb-1">Saldo atual:</p>
-                                    <h4 class="fw-bold text-success mb-0">
+                                    <h4 class="fw-bold text-primary mb-0">
                                         R$ ${conta.saldo.toLocaleString("pt-BR", {
                                             minimumFractionDigits: 2
                                         })}
