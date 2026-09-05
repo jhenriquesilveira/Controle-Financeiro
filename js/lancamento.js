@@ -19,7 +19,7 @@ export class Lancamento{
 
     static salvarLancamento(descricao, valor, tipo, data, categoriaId, contaId) {
 
-    
+        //verifica se tem saldo para realizar o lançamento se for uma despesa
         if ( tipo === "despesa" && !Conta.verificaSaldo(contaId, valor)){
             alert("Saldo insuficiente para este lançament")
             return
@@ -53,7 +53,7 @@ export class Lancamento{
         const tipoAnterior = lancamento.tipo
         const valorAnterior = Number(lancamento.valor)
 
-        // Verifica saldo quando o novo lançamento for uma despesa
+        //verifica se tem saldo para realizar o lançamento se for uma despesa
         if (tipo === "despesa") {
             const contaNova = Conta.buscar(contaId)
             let saldoDisponivel = Number(contaNova.saldo)
