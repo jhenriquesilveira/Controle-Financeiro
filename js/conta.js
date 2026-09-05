@@ -61,4 +61,9 @@ export class Conta{
         conta.saldo = saldo
         Storage.salvar("contas", contas)
     }
+
+    static verificaSaldo(id,valor){
+        const conta = this.buscar(id)        
+        return conta.saldo >= valor
+    }
 }

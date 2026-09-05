@@ -4,6 +4,8 @@ import { Conta } from "./conta.js"
 import { Categoria } from "./categoria.js"
 import { Lancamento } from "./lancamento.js"
 
+configurarTema()
+
 function carregarContas(idElemento) {
 
     const contas = Storage.recuperar("contas")
@@ -54,6 +56,43 @@ function carregarTotaisMes(compMes, receita, despesa, total) {
     document.getElementById(total).textContent = Lancamento.saldo(Number(mes), Number(ano)).toFixed(2)
 }
 
+//Tema claro e escuro
+function configurarTema() {
+
+    const btnTema = document.getElementById("btnTema")
+
+    if (!btnTema) return
+
+    const temaSalvo = Storage.recuperar("tema", "light")
+
+    document.documentElement.setAttribute("data-bs-theme", temaSalvo)
+
+    atualizarBotaoTema(btnTema, temaSalvo)
+
+    btnTema.addEventListener("click", () => {
+
+        const temaAtual = document.documentElement.getAttribute("data-bs-theme")
+
+        const novoTema = temaAtual === "dark" ? "light" : "dark"
+
+        document.documentElement.setAttribute("data-bs-theme", novoTema)
+
+        Storage.salvar("tema", novoTema)
+
+        atualizarBotaoTema(btnTema, novoTema)
+    })
+}
+
+function atualizarBotaoTema(botao, tema) {
+
+    if (tema === "dark") {
+        botao.classList.add("dark")
+        botao.title = "Mudar para tema claro"
+    } else {
+        botao.classList.remove("dark")
+        botao.title = "Mudar para tema escuro"
+    }
+}
 
 //TELA CONTAS
 const btnNovaConta = document.getElementById("btnNovaConta")
@@ -95,7 +134,7 @@ if (btnNovaConta) {
         contas.forEach(conta => {
             divLista.innerHTML += `
             <div class="col-lg-4 col-md-6 mb-3">
-                    <div class="card border-0 shadow-sm">
+                    <div class="card border-0 shadow-sm card-conta">
                         <div class="card-body">
                             <div>
                                 <div class="d-flex align-items-center justify-content-between mb-3">
@@ -600,7 +639,7 @@ if (modalLancamento) {
                     <td>${formatarData(lancamento.data)}</td>
                     <td class="fw-semibold">${lancamento.descricao}</td>
                     <td>
-                        <span class="badge bg-light text-dark fw-normal">
+                        <span class="badge badge-categoria fw-normal">
                             ${categoria ? categoria.nome : ""}
                         </span>
                     </td>

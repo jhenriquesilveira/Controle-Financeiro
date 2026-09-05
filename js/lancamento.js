@@ -19,6 +19,12 @@ export class Lancamento{
 
     static salvarLancamento(descricao, valor, tipo, data, categoriaId, contaId) {
 
+    
+        if ( tipo === "despesa" && !Conta.verificaSaldo(contaId, valor)){
+            alert("Saldo insuficiente para este lançament")
+            return
+        }
+
         const lancamentos = Storage.recuperar("lancamentos")
         const lancamento = {
             id: Date.now(),
@@ -41,8 +47,26 @@ export class Lancamento{
         const lancamento = lancamentos.find(lancamento => lancamento.id === id)
 
         if (!lancamento) {return}
-        //Se o usuário trocar a conta na atualização, a conta antiga e a nova serão atualizadas
-        const contaAnteriorId = lancamento.contaId 
+
+         // Guarda os dados anteriores antes da alteração
+        const contaAnteriorId = lancamento.contaId
+        const tipoAnterior = lancamento.tipo
+        const valorAnterior = Number(lancamento.valor)
+
+        // Verifica saldo quando o novo lançamento for uma despesa
+        if (tipo === "despesa") {
+            const contaNova = Conta.buscar(contaId)
+            let saldoDisponivel = Number(contaNova.saldo)
+            // Se a despesa antiga pertencia à mesma conta, devolvemos temporariamente o valor dela ao saldo.
+            if (contaAnteriorId === contaId) {
+                if (tipoAnterior === "despesa") {saldoDisponivel += valorAnterior}
+                if (tipoAnterior === "receita") {saldoDisponivel -= valorAnterior}
+            }
+            if (saldoDisponivel < Number(valor)) {
+                alert("Saldo insuficiente para este lançamento.")
+                return
+            }
+        }
 
         lancamento.descricao = descricao
         lancamento.valor = valor
@@ -95,9 +119,8 @@ export class Lancamento{
     }
 
     static saldo(mes, ano) {
-
         const receitas = this.totalReceitas(mes, ano)
         const despesas = this.totalDespesas(mes, ano)
         return receitas - despesas
-    }    
+    }     
 }

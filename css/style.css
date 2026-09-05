@@ -2,6 +2,11 @@ body {
     background: #f7f9fc;
     color: #1f2937;
 }
+/* Tema escuro do Bootstrap */
+html[data-bs-theme="dark"] body {
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
+}
 
 .footer-text {
     color: rgba(255, 255, 255, 0.55);
@@ -11,15 +16,27 @@ body {
     border-color: #b7e4c7;
     background: linear-gradient(135deg, #fff, #f4fff7);
 }
+html[data-bs-theme="dark"] .card-receitas {
+    border-color: #2f6f4e;
+    background: linear-gradient(135deg, #18251e, #1d3025);
+}
 
 .card-despesas {
     border-color: #f5b7bd;
     background: linear-gradient(135deg, #fff, #fff6f6);
 }
+html[data-bs-theme="dark"] .card-despesas {
+    border-color: #8f4149;
+    background: linear-gradient(135deg, #281b1d, #342022);
+}
 
 .card-saldo {
     border-color: #b8d4ff;
     background: linear-gradient(135deg, #fff, #f5f9ff);
+}
+html[data-bs-theme="dark"] .card-saldo {
+    border-color: #416da8;
+    background: linear-gradient(135deg, #182230, #1d293b);
 }
 
 .linha-vazia td {
@@ -34,6 +51,10 @@ body {
     color: #146c43;
     background: #d1e7dd;
 }
+html[data-bs-theme="dark"] .badge-receita {
+    color: #75d6a3;
+    background: #193b2a;
+}
 
 .badge-despesa {
     width: 72px;
@@ -42,4 +63,92 @@ body {
     color: #b02a37;
     background: #f8d7da;
 }
+html[data-bs-theme="dark"] .badge-despesa {
+    color: #f08a93;
+    background: #452025;
+}
 
+html[data-bs-theme="dark"] .card-header-tema {
+    background-color: var(--bs-body-bg) !important;
+    color: var(--bs-body-color);
+}
+
+.badge-categoria {
+    background-color: #f8f9fa;
+    color: #212529;
+}
+html[data-bs-theme="dark"] .badge-categoria {
+    background-color: #343a40;
+    color: #f8f9fa;
+}
+
+.card-conta {
+    border: 0;
+}
+html[data-bs-theme="dark"] .card-conta {
+    border: 1px solid #495057 !important;
+}
+
+.theme-option i {
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+/* Tema claro */
+.theme-toggle:not(.dark) .sun {
+    color: #212529;
+}
+
+.theme-toggle:not(.dark) .moon {
+    color: white;
+}
+
+/* Tema escuro */
+.theme-toggle.dark .sun {
+    color: white;
+}
+
+.theme-toggle.dark .moon {
+    color: #212529;
+}
+
+.theme-toggle {
+    width: 80px;
+    height: 40px;
+    border-radius: 20px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px;
+    background-color: #212529;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.theme-option {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.theme-indicator {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: white;
+    left: 4px;
+    transition: transform 0.3s ease;
+    z-index: 1;
+}
+
+.theme-toggle.dark .theme-indicator {
+    transform: translateX(40px);
+}
