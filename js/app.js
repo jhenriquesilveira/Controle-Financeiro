@@ -282,8 +282,8 @@ if (btnNovaCategoria) {
                         </div>
                     </div>
                     <div>
-                        <button class="btn btn-sm btn-outline-primary me-1" data-edit-categoria="${categoria.id}"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-outline-danger" data-delete-categoria="${categoria.id}"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-sm btn-outline-primary me-1" data-edit-categoria="${categoria.id}" aria-label="Botão editar"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" data-delete-categoria="${categoria.id}" aria-label="Botão excluir"><i class="bi bi-trash"></i></button>
                     </div>
                  </div>
             `
@@ -425,8 +425,8 @@ if (formDashboardLancamento) {
             const classeValor = lancamento.tipo === "receita" ? "text-success" : "text-danger"
             const sinal = lancamento.tipo === "receita" ? "+" : "-"
             const badgeTipo = lancamento.tipo === "receita" 
-                ? `<span class="badge bg-success-subtle text-success fw-normal rounded-2 d-inline-flex align-items-center justify-content-center" style="width: 65px; height: 27px;">Receita</span>`
-                : `<span class="badge bg-danger-subtle text-danger fw-normal rounded-2 d-inline-flex align-items-center justify-content-center" style="width: 65px; height: 27px;">Despesa</span>`
+                ? `<span class="badge bg-success-subtle text-black fw-normal rounded-2 d-inline-flex align-items-center justify-content-center" style="width: 65px; height: 27px;">Receita</span>`
+                : `<span class="badge bg-danger-subtle text-black fw-normal rounded-2 d-inline-flex align-items-center justify-content-center" style="width: 65px; height: 27px;">Despesa</span>`
 
             tabela.innerHTML += `
                 <tr>
@@ -634,9 +634,9 @@ if (modalLancamento) {
             const conta = contas.find(conta => conta.id === lancamento.contaId)
 
             const badgeTipo = lancamento.tipo === "receita"
-                ? `<span class="badge badge-tipo bg-success-subtle text-success-emphasis rounded-3 py-2 fw-normal">
+                ? `<span class="badge badge-tipo bg-success-subtle text-black rounded-3 py-2 fw-normal">
                     Receita</span>`
-                : `<span class="badge badge-tipo bg-danger-subtle text-danger-emphasis rounded-3 py-2 fw-normal">
+                : `<span class="badge badge-tipo bg-danger-subtle text-black rounded-3 py-2 fw-normal">
                     Despesa</span>`
 
             const valor = lancamento.valor.toLocaleString("pt-BR", {style: "currency", currency: "BRL"})
@@ -656,11 +656,11 @@ if (modalLancamento) {
                         ${lancamento.tipo === "receita" ? "+" : "-"} ${valor}
                     </td>
                     <td class="text-end">
-                        <button class="btn btn-outline-primary btn-sm btn-editar-lancamento" data-id="${lancamento.id}">
+                        <button class="btn btn-outline-primary btn-sm btn-editar-lancamento" data-id="${lancamento.id}" aria-label="Botão editar">
                             <i class="bi bi-pencil"></i>
                         </button>
 
-                        <button class="btn btn-outline-danger btn-sm btn-excluir-lancamento" data-id="${lancamento.id}">
+                        <button class="btn btn-outline-danger btn-sm btn-excluir-lancamento" data-id="${lancamento.id}" aria-label="Botão excluir">
                             <i class="bi bi-trash"></i>
                         </button>
                     </td>
