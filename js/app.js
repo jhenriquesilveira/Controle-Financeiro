@@ -437,8 +437,8 @@ if (formDashboardLancamento) {
                     <td>${badgeTipo}</td>
                     <td class="text-end fw-bold ${classeValor}">${sinal} R$ ${lancamento.valor.toLocaleString("pt-BR", {minimumFractionDigits: 2})}</td>
                     <td class="text-end">
-                        <button class="btn btn-sm btn-outline-primary" data-edit-index="${lancamento.id}"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-outline-danger" data-delete-index="${lancamento.id}"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-sm btn-outline-primary" data-edit-index="${lancamento.id}" aria-label="Botão editar"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" data-delete-index="${lancamento.id}" aria-label="Botão excluir"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr> `            
         })
