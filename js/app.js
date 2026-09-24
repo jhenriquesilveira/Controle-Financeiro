@@ -150,10 +150,10 @@ if (btnNovaConta) {
                                         <i class="bi ${obterIconeConta(conta.tipo)} fs-4"></i>
                                     </div>
                                     <div>
-                                        <button class="btn btn-sm btn-outline-primary me-1" data-edit-conta="${conta.id}">
+                                        <button class="btn btn-sm btn-outline-primary me-1" data-edit-conta="${conta.id}"  aria-label="Botão editar">
                                             <i class="bi bi-pencil"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-outline-danger" data-delete-conta="${conta.id}">
+                                        <button class="btn btn-sm btn-outline-danger" data-delete-conta="${conta.id}" aria-label="Botão excluir">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>

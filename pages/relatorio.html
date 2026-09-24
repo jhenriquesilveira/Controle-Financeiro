@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt_BR">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,6 +20,8 @@
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
+          aria-expanded="false"
+          aria-label="Abrir menu de navegação"
         >
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -68,8 +70,8 @@
             </div>
             <div class="col-auto">
               <div class="position-relative" title="Digite mês e ano para filtrar o relatório">
-                <i class="bi bi-calendar3 position-absolute top-50 start-0 translate-middle-y ms-2"></i>               
-                <input type="text" id="RelatorioFiltroMes" class="form-control ps-5" placeholder="MM/AAAA" maxlength="7" inputmode="numeric" autocomplete="off">      
+                <i class="bi bi-calendar3 position-absolute top-50 start-0 translate-middle-y ms-2" aria-hidden="true"></i>               
+                <input type="text" id="RelatorioFiltroMes" class="form-control ps-5" placeholder="MM/AAAA" maxlength="7" inputmode="numeric" autocomplete="off" aria-label="Mês e ano do relatório">      
               </div>
             </div>
         </div>
