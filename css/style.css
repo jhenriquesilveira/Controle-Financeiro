@@ -171,3 +171,7 @@ html[data-bs-theme="dark"] .card-conta {
 #btnTema::after {
     border-top-color: #fff;
 }
+
+.footer-text {
+    color: #fff;
+}
