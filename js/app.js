@@ -56,41 +56,48 @@ function carregarTotaisMes(compMes, receita, despesa, total) {
     document.getElementById(total).textContent = Lancamento.saldo(Number(mes), Number(ano)).toFixed(2)
 }
 
-//Tema claro e escuro
+// Tema claro e escuro
 function configurarTema() {
 
     const btnTema = document.getElementById("btnTema")
+    const opcoesTema = document.querySelectorAll(".theme-option")
 
     if (!btnTema) return
 
     const temaSalvo = Storage.recuperar("tema", "light")
 
-    document.documentElement.setAttribute("data-bs-theme", temaSalvo)
+    aplicarTema(temaSalvo, btnTema, opcoesTema)
 
-    atualizarBotaoTema(btnTema, temaSalvo)
+    opcoesTema.forEach(opcao => {
 
-    btnTema.addEventListener("click", () => {
+        opcao.addEventListener("click", () => {
 
-        const temaAtual = document.documentElement.getAttribute("data-bs-theme")
+            const novoTema = opcao.dataset.theme
 
-        const novoTema = temaAtual === "dark" ? "light" : "dark"
+            aplicarTema(novoTema, btnTema, opcoesTema)
 
-        document.documentElement.setAttribute("data-bs-theme", novoTema)
-
-        Storage.salvar("tema", novoTema)
-
-        atualizarBotaoTema(btnTema, novoTema)
+            Storage.salvar("tema", novoTema)
+        })
     })
+}
+
+function aplicarTema(tema, botao, opcoesTema) {
+
+    document.documentElement.setAttribute("data-bs-theme", tema)
+
+    atualizarBotaoTema(botao, tema)
 }
 
 function atualizarBotaoTema(botao, tema) {
 
+    const icone = botao.querySelector("i")
+
     if (tema === "dark") {
-        botao.classList.add("dark")
-        botao.title = "Mudar para tema claro"
+        icone.className = "bi bi-moon-stars-fill text-white"
+        botao.title = "Tema escuro"
     } else {
-        botao.classList.remove("dark")
-        botao.title = "Mudar para tema escuro"
+        icone.className = "bi bi-sun-fill text-white"
+        botao.title = "Tema claro"
     }
 }
 

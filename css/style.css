@@ -152,3 +152,22 @@ html[data-bs-theme="dark"] .card-conta {
 .theme-toggle.dark .theme-indicator {
     transform: translateX(40px);
 }
+
+.icon{
+    width: 40px;    
+}
+
+.nav-link{
+    color: #fff !important;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover{
+    box-shadow: inset 0 -2px #fff;
+    transform: scale(1.05);
+}
+
+/*deixa a seta do dropdown branca*/
+#btnTema::after {
+    border-top-color: #fff;
+}
